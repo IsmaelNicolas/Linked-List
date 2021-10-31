@@ -20,6 +20,14 @@ public:
     Node* next;
     Node();
     Node(T); 
+    friend bool operator==(Node<T> &nd_1,Node<T> &nd_2)
+    {
+        if((nd_1.data == nd_2.data))
+        {
+            return true;
+        }
+        return false;
+    }
     friend std::ostream &operator <<(std::ostream&out,const Node<T> &node)
     {out<<node.data;return out;}
 };
@@ -36,6 +44,10 @@ Node<T>::Node(T data)
     this->data = data;
     this->next = nullptr;
 }
+
+
+
+
 
 #pragma endregion //NODE
 
@@ -80,7 +92,26 @@ namespace List
         bool clean();
         bool is_empy();
         int get_size();
+        Node<T>* get_node()const
+        {
+            return this->object;
+        }
 
+        friend bool operator==(List::simple<T>& list_1 ,List::simple<T>& list_2)
+        {
+            Node<T> *tmp_1 = list_1.get_node(); 
+            Node<T> *tmp_2 = list_2.get_node(); 
+
+            while (tmp_1->next != NULL || tmp_2->next != NULL)
+            {
+                if(tmp_1->data != tmp_2->data)
+                    return false;
+
+                tmp_1 = tmp_1->next;
+                tmp_2 = tmp_2->next;
+            }
+            return true;
+        }
         friend std::ostream &operator <<(std::ostream&out,const List::simple<T> &list)
         {
             if (list.size == 0)
@@ -102,12 +133,17 @@ namespace List
             }
             
         }
+        void operator+=(const Node<T>& nd);
+        void operator+=(const T& nd);
+        bool operator>( List::simple<T>& list);
+        bool operator<( List::simple<T>& list);
 
     };
 
 #pragma endregion //DECLARATION
 
 #pragma region Implementation
+
 
 template<class T>
 simple<T>::simple() : object(NULL),size(0){}
@@ -117,6 +153,31 @@ bool simple<T>::is_empy() {return this->size==0? true:false;}
 
 template<class T>
 int simple<T>::get_size(){return this->size;}
+
+template<class T>
+void simple<T>::operator+=(const Node<T> &nd)
+{
+    this->push_back(nd.data);
+}
+
+template<class T>
+void simple<T>::operator+=(const T &nd)
+{
+    this->push_back(nd);
+}
+
+template<class T>
+bool simple<T>::operator>(List::simple<T>& list)
+{
+    return this->size > list.get_size();
+}
+
+template<class T>
+bool simple<T>::operator<( List::simple<T>& list)
+{
+    return this->size < list.get_size();
+}
+
 
 template<class T>
 void simple<T>::print_list()
